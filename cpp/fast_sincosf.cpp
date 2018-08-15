@@ -1,3 +1,7 @@
+#include <cmath>
+#include "fast_sincosf.h"
+
+using namespace std;
 
 // Calculates the sin and cosine quickly with accuracy of 10^-6 (typical error 10^-8)
 // Uses a 6th order Taylor extension around the closest point in lookup table
@@ -7,7 +11,7 @@
 // even be slower. Double precision is rarely actually needed anyways, so this should be enough.
 //
 // returns a tuple {sin(x), cos(x)}
-tuple<float, float> FastSinCos(double x)
+tuple<float, float> FastSinCos(float x)
 {
    // lookup table contains 64 values for sin(x), where 0 <= x < 2*pi
    static const double lookup[64] = {
@@ -45,7 +49,7 @@ tuple<float, float> FastSinCos(double x)
       -0.19509032201612871993, -0.098017140329560506484
    };
 
-   int index = static_cast<int>(x * (32. / M_PI));
+   int index = static_cast<int>(x * (32. / M_PI) + 0.5);
 
    // distance from the point in lookup table
    double dt = x - (M_PI / 32.) * index;
@@ -63,7 +67,9 @@ tuple<float, float> FastSinCos(double x)
    double dt2 = dt * dt * (1./2.);
    double dt3 = dt2 * (dt * (1./3.));
    double dt4 = dt3 * (dt * (1./4.));
-   double dt5 = dt3 * (dt2 * (1./10.));
+   double dt5 = dt4 * (dt * (1./5.));
+   double dt6 = dt5 * (dt * (1./6.));
+   double dt7 = dt6 * (dt * (1./7.));
 
    // the sums are same for sin and cos (Taylor):
    double first = 1 - dt2 + dt4;
