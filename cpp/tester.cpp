@@ -22,9 +22,9 @@ int main(int argc, char **args){
 
 	//unsigned int step = 100;
 	//for(unsigned int i = 0; i < i + step; i += step){
-	for(unsigned int i = 1000000000; i < 1200000000; i++){
+	for(unsigned int i = 1010000000; i < 1100000000; i++){
 		float *x = reinterpret_cast<float*>(&i);
-		float val = get<0>(FastSinCos(*x));
+		float val = get<0>(FastSinCos128(*x));
 		float ref = sin(*x);
 		float err = abs(ref - val);
 		float Rerr = abs(err / ref);
@@ -55,14 +55,14 @@ int main(int argc, char **args){
 	}
 	
     clock_t c_end = clock();
-	auto time_used = (c_end-c_start) / CLOCKS_PER_SEC;
+	auto time_used = 1000 * (c_end-c_start) / CLOCKS_PER_SEC;
 	
 	cout << setprecision(8) << endl;
 	cout << "Done!\nThere was " << zeroes << " correct values, " << errors
 		<< " incorrect ones.\nMax error was " << maxerr 
-		<< ", gotten at x = " << maxerrlocation
-		<< "\nMax relative error was " << rmaxerr 
-		<< ", gotten at x = " << rmaxerrlocation
-		<< ".\nThis took " << time_used << " s" << endl;
+		<< ",\tfound at x = " << maxerrlocation
+		<< "\nMax rel error was " << rmaxerr 
+		<< ",\tfound at x = " << rmaxerrlocation
+		<< ".\nThis took " << 0.001 * time_used << " s" << endl;
 	return 0;
 }

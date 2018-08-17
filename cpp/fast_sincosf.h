@@ -8,4 +8,6 @@
 // even be slower. Double precision is rarely actually needed anyways, so this should be enough.
 //
 // returns a tuple {sin(x), cos(x)}
-std::tuple<float, float> FastSinCos(float x);
+std::tuple<float, float> FastSinCos128(float x);
+std::tuple<float, float> FastSinCos64(float x);
+std::tuple<float, float> FastSinCos32(float x);
