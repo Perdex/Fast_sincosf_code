@@ -1,174 +1,69 @@
 #include <cmath>
+#include <iostream>
 #include "fast_sincosf.h"
+
+#define PRECISION 64
+
 
 using namespace std;
 
-tuple<float, float> FastSinCos32(float x)
-{
    // lookup table contains 64 values for sin(x), where 0 <= x < 2*pi
-   static const double lookup[32] = {
-		0.0000000000000000,  0.1950903220161282,  0.3826834323650898,  0.5555702330196022,
-		0.7071067811865475,  0.8314696123025452,  0.9238795325112867,  0.9807852804032304,
-		1.0000000000000000,  0.9807852804032304,  0.9238795325112867,  0.8314696123025455,
-		0.7071067811865476,  0.5555702330196022,  0.3826834323650899,  0.1950903220161286,
-		0.0000000000000001,  -0.1950903220161284,  -0.3826834323650897,  -0.5555702330196020,
-		-0.7071067811865475,  -0.8314696123025452,  -0.9238795325112865,  -0.9807852804032303,
-		-1.0000000000000000,  -0.9807852804032304,  -0.9238795325112866,  -0.8314696123025455,
-		-0.7071067811865477,  -0.5555702330196022,  -0.3826834323650904,  -0.1950903220161287
-   };
+double lookup[PRECISION];
 
-   int index = static_cast<int>(x * (16. / M_PI) + 0.5);
-
-   // distance from the point in lookup table
-   double dt = x - (M_PI / 16.) * index;
-
-   // 0 <= index < 64
-   // index & 63 == index % 64
-   index += 32;
-   index &= 31;
-
-   // s is the value of sine (floored) from lookup table, c is cos
-   double s = lookup[index];
-   double c = lookup[(index + 8) & 31];
-
-   // dt2 = dt^2/2 and so on, all with integration constants
-   double dt2 = dt * dt * (1./2.);
-   double dt3 = dt2 * (dt * (1./3.));
-   double dt4 = dt3 * (dt * (1./4.));
-   double dt5 = dt4 * (dt * (1./5.));
-   double dt6 = dt5 * (dt * (1./6.));
-   double dt7 = dt6 * (dt * (1./7.));
-
-   // the sums are same for sin and cos (Taylor):
-   double first = 1 - dt2 + dt4;
-   double second = dt - dt3 + dt5;
-
-   // {sin(x), cos(x)}
-   return make_tuple(static_cast<float>(s * first + c * second),
-                     static_cast<float>(c * first - s * second));
-}
-tuple<float, float> FastSinCos64(float x)
-{
-   // lookup table contains 64 values for sin(x), where 0 <= x < 2*pi
-   static const double lookup[64] = {
-		0.0000000000000000,  0.0980171403295606,  0.1950903220161282,  0.2902846772544623,
-		0.3826834323650898,  0.4713967368259976,  0.5555702330196022,  0.6343932841636455,
-		0.7071067811865475,  0.7730104533627370,  0.8314696123025452,  0.8819212643483549,
-		0.9238795325112867,  0.9569403357322089,  0.9807852804032304,  0.9951847266721968,
-		1.0000000000000000,  0.9951847266721969,  0.9807852804032304,  0.9569403357322089,
-		0.9238795325112867,  0.8819212643483550,  0.8314696123025455,  0.7730104533627371,
-		0.7071067811865476,  0.6343932841636455,  0.5555702330196022,  0.4713967368259979,
-		0.3826834323650899,  0.2902846772544624,  0.1950903220161286,  0.0980171403295608,
-		0.0000000000000001,  -0.0980171403295606,  -0.1950903220161284,  -0.2902846772544621,
-		-0.3826834323650897,  -0.4713967368259976,  -0.5555702330196020,  -0.6343932841636453,
-		-0.7071067811865475,  -0.7730104533627367,  -0.8314696123025452,  -0.8819212643483549,
-		-0.9238795325112865,  -0.9569403357322088,  -0.9807852804032303,  -0.9951847266721969,
-		-1.0000000000000000,  -0.9951847266721969,  -0.9807852804032304,  -0.9569403357322089,
-		-0.9238795325112866,  -0.8819212643483550,  -0.8314696123025455,  -0.7730104533627369,
-		-0.7071067811865477,  -0.6343932841636459,  -0.5555702330196022,  -0.4713967368259979,
-		-0.3826834323650904,  -0.2902846772544625,  -0.1950903220161287,  -0.0980171403295605
-   };
-
-   int index = static_cast<int>(x * (32. / M_PI) + 0.5);
-
-   // distance from the point in lookup table
-   double dt = x - (M_PI / 32.) * index;
-
-   // 0 <= index < 64
-   // index & 63 == index % 64
-   index += 64;
-   index &= 63;
-
-   // s is the value of sine (floored) from lookup table, c is cos
-   double s = lookup[index];
-   double c = lookup[(index + 16) & 63];
-
-   // dt2 = dt^2/2 and so on, all with integration constants
-   double dt2 = dt * dt * (1./2.);
-   double dt3 = dt2 * (dt * (1./3.));
-   double dt4 = dt3 * (dt * (1./4.));
-   double dt5 = dt4 * (dt * (1./5.));
-   double dt6 = dt5 * (dt * (1./6.));
-   double dt7 = dt6 * (dt * (1./7.));
-
-   // the sums are same for sin and cos (Taylor):
-   double first = 1 - dt2 + dt4;
-   double second = dt - dt3 + dt5;
-
-   // {sin(x), cos(x)}
-   return make_tuple(static_cast<float>(s * first + c * second),
-                     static_cast<float>(c * first - s * second));
+void init_table(){
+	for(int i = 0; i < PRECISION; i++){
+		lookup[i] = sin(i * M_PI * 2 / PRECISION);
+	}
 }
 
-
-
-tuple<float, float> FastSinCos128(float x)
+tuple<float, float> FastSinCos(float x)
 {
-   // lookup table contains 64 values for sin(x), where 0 <= x < 2*pi
-   static const double lookup[128] = {
-		0.0000000000000000,  0.0490676743274180,  0.0980171403295606,  0.1467304744553617,
-		0.1950903220161282,  0.2429801799032639,  0.2902846772544623,  0.3368898533922201,
-		0.3826834323650898,  0.4275550934302821,  0.4713967368259976,  0.5141027441932217,
-		0.5555702330196022,  0.5956993044924334,  0.6343932841636455,  0.6715589548470183,
-		0.7071067811865475,  0.7409511253549591,  0.7730104533627370,  0.8032075314806448,
-		0.8314696123025452,  0.8577286100002721,  0.8819212643483549,  0.9039892931234433,
-		0.9238795325112867,  0.9415440651830208,  0.9569403357322089,  0.9700312531945440,
-		0.9807852804032304,  0.9891765099647810,  0.9951847266721968,  0.9987954562051724,
-		1.0000000000000000,  0.9987954562051724,  0.9951847266721969,  0.9891765099647810,
-		0.9807852804032304,  0.9700312531945440,  0.9569403357322089,  0.9415440651830208,
-		0.9238795325112867,  0.9039892931234434,  0.8819212643483550,  0.8577286100002721,
-		0.8314696123025455,  0.8032075314806449,  0.7730104533627371,  0.7409511253549590,
-		0.7071067811865476,  0.6715589548470186,  0.6343932841636455,  0.5956993044924335,
-		0.5555702330196022,  0.5141027441932218,  0.4713967368259979,  0.4275550934302820,
-		0.3826834323650899,  0.3368898533922203,  0.2902846772544624,  0.2429801799032641,
-		0.1950903220161286,  0.1467304744553618,  0.0980171403295608,  0.0490676743274180,
-		0.0000000000000001,  -0.0490676743274177,  -0.0980171403295606,  -0.1467304744553616,
-		-0.1950903220161284,  -0.2429801799032638,  -0.2902846772544621,  -0.3368898533922201,
-		-0.3826834323650897,  -0.4275550934302818,  -0.4713967368259976,  -0.5141027441932216,
-		-0.5555702330196020,  -0.5956993044924332,  -0.6343932841636453,  -0.6715589548470184,
-		-0.7071067811865475,  -0.7409511253549589,  -0.7730104533627367,  -0.8032075314806451,
-		-0.8314696123025452,  -0.8577286100002720,  -0.8819212643483549,  -0.9039892931234431,
-		-0.9238795325112865,  -0.9415440651830208,  -0.9569403357322088,  -0.9700312531945440,
-		-0.9807852804032303,  -0.9891765099647809,  -0.9951847266721969,  -0.9987954562051724,
-		-1.0000000000000000,  -0.9987954562051724,  -0.9951847266721969,  -0.9891765099647809,
-		-0.9807852804032304,  -0.9700312531945440,  -0.9569403357322089,  -0.9415440651830209,
-		-0.9238795325112866,  -0.9039892931234433,  -0.8819212643483550,  -0.8577286100002722,
-		-0.8314696123025455,  -0.8032075314806453,  -0.7730104533627369,  -0.7409511253549591,
-		-0.7071067811865477,  -0.6715589548470187,  -0.6343932841636459,  -0.5956993044924332,
-		-0.5555702330196022,  -0.5141027441932219,  -0.4713967368259979,  -0.4275550934302825,
-		-0.3826834323650904,  -0.3368898533922200,  -0.2902846772544625,  -0.2429801799032642,
-		-0.1950903220161287,  -0.1467304744553624,  -0.0980171403295605,  -0.0490676743274181
-   };
+	//double x = fmod(x_, 2 * M_PI);
+	//Overflow of the int becomes a problem somewhere after x = 1e8
+	int index = static_cast<unsigned int>(x * (PRECISION * 0.5 / M_PI) + 0.5);
 
-   int index = static_cast<int>(x * (64. / M_PI) + 0.5);
+	// distance from the point in lookup table
+	double dt = x - (M_PI * 2 / PRECISION) * index;
+	#ifdef DEBUG
+		cout << "\nx_ is\t" << x
+			<< "\nx is\t" << x
+			<< "\nind0 is\t" << x * (PRECISION * 0.5 / M_PI) + 0.5
+			<< "\nind1 is\t" << index
+			<< "\ndt is\t" << dt
+			<< "\n";
+	#endif
+	// 0 <= index < 64
+	// index & 63 == index % 64
+	index += PRECISION;
+	index &= (PRECISION-1);
 
-   // distance from the point in lookup table
-   double dt = x - (M_PI / 64.) * index;
+	// s is the value of sine (floored) from lookup table, c is cos
+	double s = lookup[index];
+	double c = lookup[(index + (PRECISION/4)) & (PRECISION-1)];
 
-   // 0 <= index < 64
-   // index & 63 == index % 64
-   index += 128;
-   index &= 127;
+	// dt2 = dt^2/2 and so on, all with integration constants
+	double dt2 = dt * dt * (1./2.);
+	double dt3 = dt2 * (dt * (1./3.));
+	double dt4 = dt3 * (dt * (1./4.));
+	double dt5 = dt4 * (dt * (1./5.));
+	double dt6 = dt5 * (dt * (1./6.));
+	//double dt7 = dt6 * (dt * (1./7.));
 
-   // s is the value of sine (floored) from lookup table, c is cos
-   double s = lookup[index];
-   double c = lookup[(index + 32) & 127];
+	// the sums are same for sin and cos (Taylor):
+	double first = 1 - dt2 + dt4 - dt6;
+	double second = dt - dt3 + dt5;
+	#ifdef DEBUG
+		cout << "ind2 is\t" << index
+			<< "\ns is\t" << s
+			<< "\nc is\t" << c
+			<< "\nfirst is\t" << first
+			<< "\nsecond is\t" << second
+			<< "\n";
+	#endif
 
-   // dt2 = dt^2/2 and so on, all with integration constants
-   double dt2 = dt * dt * (1./2.);
-   double dt3 = dt2 * (dt * (1./3.));
-   double dt4 = dt3 * (dt * (1./4.));
-   double dt5 = dt4 * (dt * (1./5.));
-   double dt6 = dt5 * (dt * (1./6.));
-   double dt7 = dt6 * (dt * (1./7.));
-
-   // the sums are same for sin and cos (Taylor):
-   double first = 1 - dt2 + dt4 - dt6;
-   double second = dt - dt3 + dt5;
-
-   // {sin(x), cos(x)}
-   return make_tuple(static_cast<float>(s * first + c * second),
-                     static_cast<float>(c * first - s * second));
+	// {sin(x), cos(x)}
+	return make_tuple(static_cast<float>(s * first + c * second),
+					 static_cast<float>(c * first - s * second));
 }
 
 

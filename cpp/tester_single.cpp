@@ -17,18 +17,15 @@ int main(int argc, char **args){
 	float rmaxerrlocation = 0;
 	
 	float shortmaxerr = 0;
-	
 	init_table();
 	
     clock_t c_start = clock();
-	
-	unsigned int step = 1;
-	//for(unsigned int i = 0; i < i + step; i += step){
-	//for(unsigned int i = 1280000000; i < 2000000000; i += step){
-	for(unsigned int i = 0; i < 1200000000; i+=step){
+
+	unsigned int i = 3180776420;
 		float *x = reinterpret_cast<float*>(&i);
+		cout << "x is " << *x << endl;
 		float val = get<0>(FastSinCos(*x));
-		float ref = 0;//sin(*x);
+		float ref = sin(*x);
 		float err = abs(ref - val);
 		float Rerr = abs(err / ref);
 		
@@ -53,18 +50,17 @@ int main(int argc, char **args){
 			if(err == INFINITY){
 				cout << setprecision(20);
 				cout << "Error: i = " << i << "\tx = " << *x << ",\tval = " << val << ",\terr = " << err << "\n";
-				break;
 			}
 		}
 		
-		if(i % 100000000 == 0){
+		if(i % 10000000 == 0){
 			cout << "i: " << i/1000000 << " M\tx: " << *x 
 			<< ", \tmax err: " << maxerr 
 			<< ",\tshort max err: " << shortmaxerr
 			<< ",\tmax rel err: " << rmaxerr  << "\n";
 			shortmaxerr = 0;
 		}
-	}
+
 	
     clock_t c_end = clock();
 	auto time_used = 1000 * (c_end-c_start) / CLOCKS_PER_SEC;
