@@ -14,14 +14,14 @@ int main(int argc, char **args){
 	
 	//unsigned int from = 1000000000;
 	//unsigned int to = 1100000000;
-	unsigned int ff = 100000000;
+	unsigned int ff = 1000000000;
 	unsigned int tt = 1200000000;
-	unsigned int batch = 200000000;
+	unsigned int batch = 10000000;
 
 	for(unsigned int from = ff; from < tt; from += batch){
 
 		unsigned int to = from + batch;
-		unsigned int n = from - to;
+		unsigned int n = batch;
 		float f_;
 		float t_;
 		std::memcpy(&f_, &from, sizeof f_);
