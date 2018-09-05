@@ -1,5 +1,5 @@
 
-FLAGS = -std=c++11 -Wall
+FLAGS = -std=c++14 -Wall
 
 all:
 
@@ -15,5 +15,11 @@ single:
 	rm *.o
 fast_sincosf.o:
 	g++ fast_sincosf.cpp -c $(FLAGS) -O2
+
+asm:
+	g++ fast_sincosf.cpp speedtest.cpp -S $(FLAGS) -O2 -fverbose-asm
+
 clean:
 	rm -f *.o tester single speedtest
+
+

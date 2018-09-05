@@ -26,8 +26,9 @@ int main(int argc, char **args){
 	//for(unsigned int i = 0; i < i + step; i += step){
 	//for(unsigned int i = 1280000000; i < 2000000000; i += step){
 	for(unsigned int i = 0; i < 1200000000; i+=step){
-		float *x = reinterpret_cast<float*>(&i);
-		float val = get<0>(FastSinCos(*x));
+		float x;
+		std::memcpy(&x, &i, sizeof x);
+		float val = get<0>(FastSinCos(x));
 		float ref = 0;//sin(*x);
 		float err = abs(ref - val);
 		float Rerr = abs(err / ref);
@@ -36,13 +37,13 @@ int main(int argc, char **args){
 			shortmaxerr = err;
 			if(err > maxerr){
 				maxerr = err;
-				maxerrlocation = *x;
+				maxerrlocation = x;
 			}
 		}
 		
 		if(Rerr > rmaxerr){
 			rmaxerr = Rerr;
-			rmaxerrlocation = *x;
+			rmaxerrlocation = x;
 		}
 		
 		if(err == 0){
@@ -52,13 +53,13 @@ int main(int argc, char **args){
 			//cout << "Error: i = " << i << "\tx = " << *x << ",\tval = " << val << ",\terr = " << err << "\n";
 			if(err == INFINITY){
 				cout << setprecision(20);
-				cout << "Error: i = " << i << "\tx = " << *x << ",\tval = " << val << ",\terr = " << err << "\n";
+				cout << "Error: i = " << i << "\tx = " << x << ",\tval = " << val << ",\terr = " << err << "\n";
 				break;
 			}
 		}
 		
 		if(i % 100000000 == 0){
-			cout << "i: " << i/1000000 << " M\tx: " << *x 
+			cout << "i: " << i/1000000 << " M\tx: " << x 
 			<< ", \tmax err: " << maxerr 
 			<< ",\tshort max err: " << shortmaxerr
 			<< ",\tmax rel err: " << rmaxerr  << "\n";
