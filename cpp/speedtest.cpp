@@ -10,14 +10,11 @@
 
 
 using namespace std;
-int main(int argc, char **args){
+int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 	
-	//unsigned int from = 1000000000;
-	//unsigned int to = 1100000000;
-	unsigned int ff = 1000000000;
-	unsigned int tt = 1200000000;
-	unsigned int batch = 10000000;
+	float summ = 0;
 
+	cout << setprecision(2);
 	for(unsigned int from = ff; from < tt; from += batch){
 
 		unsigned int to = from + batch;
@@ -26,30 +23,31 @@ int main(int argc, char **args){
 		float t_;
 		std::memcpy(&f_, &from, sizeof f_);
 		std::memcpy(&t_, &to, sizeof t_);
-		cout << "\nTesting range from " << f_ << " to " << t_ << "\n";
+		cout << "Cycles in [" << f_ << ", " << t_ << "]:\t";
 
 		{
-			cout << "My method:\t";
+			//cout << "My method:\t";
 			init_table();
 			auto chrono_t1 = chrono::high_resolution_clock::now();
 			clock_t c_start = clock();
 			
 
-			float sum = 0;
+			float sum[4] = {0, 0, 0, 0};
 
 			unsigned long long cycles_start = __rdtsc();
-			for(unsigned int i = from; i < to; i++){
-				float x;
-				std::memcpy(&x, &i, sizeof x);
-				//float sin, cos;
-				//FastSinCos(*x, &sin, &cos);
-				//sum += sin + cos;
+			for(unsigned int i_ = from; i_ < to; i_+=4){
+				for(unsigned int i = i_; i < i_ + 4; i++){
+					float x;
+					std::memcpy(&x, &i, sizeof x);
+					//float sin, cos;
+					//FastSinCos(*x, &sin, &cos);
+					//sum += sin + cos;
 
-				sum += FastSin(x);
+					sum[i-i_] += FastSin(x);
 
-				//if(i % 100000000 == 0)
-				//	cout << "i: " << i/1000000 << " M\tx: " << *x << "\n";
-				
+					//if(i % 100000000 == 0)
+					//	cout << "i: " << i/1000000 << " M\tx: " << *x << "\n";
+				}
 			}
 			unsigned long long cycles_end = __rdtsc();
 			
@@ -61,30 +59,34 @@ int main(int argc, char **args){
 
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
-			cout << setprecision(3);
-			cout << "Sum was " << sum << ", t:\t" << time_used << " s, \tcycles:\t" << cycles_per << "\n";
+
+			summ += sum[0] + sum[1] + sum[2] + sum[3];
+			//cout << "Sum was " << summ << ", t:\t" 
+			//	<< time_used << " s, \tcycles:\t" << cycles_per << "\n";
+			cout << cycles_per << " / ";
 				//<< "\nProcessor time (std::clock):\t" << time_used << " s"
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
 				//<< "\nCycles per calculation:\t" << cycles_per << endl;
 		}
 		
 		{
-			cout << "std::sin:\t";
+			//cout << "std::sin:\t";
 			auto chrono_t1 = chrono::high_resolution_clock::now();
 			clock_t c_start = clock();
 
 			
-			float sum = 0;
+			float sum[4] = {0, 0, 0, 0};
 			unsigned long long cycles_start = __rdtsc();
-			for(unsigned int i = from; i < to; i++){
-				float x;
-				std::memcpy(&x, &i, sizeof x);
-				sum += sin(x);
+			for(unsigned int i_ = from; i_ < to; i_+=4)
+				for(unsigned int i = i_; i < i_ + 4; i++){
+					float x;
+					std::memcpy(&x, &i, sizeof x);
+					sum[i-i_] += sin(x);
 
-				//if(i % 100000000 == 0)
-				//	cout << "i: " << i/1000000 << " M\tx: " << *x << "\n";
-				
-			}
+					//if(i % 100000000 == 0)
+					//	cout << "i: " << i/1000000 << " M\tx: " << *x << "\n";
+					
+				}
 			unsigned long long cycles_end = __rdtsc();
 			
 			auto chrono_t2 = chrono::high_resolution_clock::now();
@@ -95,12 +97,15 @@ int main(int argc, char **args){
 
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
-			cout << setprecision(3);
-			cout << "Sum was " << sum << ", t:\t" << time_used << " s, \tcycles:\t" << cycles_per << "\n";
+			summ += sum[0] + sum[1] + sum[2] + sum[3];
+			//cout << "Sum was " << summ << ", t:\t" 
+			//	<< time_used << " s, \tcycles:\t" << cycles_per << "\n";
+			cout << cycles_per << "\n";
 				//<< "\nProcessor time (std::clock):\t" << time_used << " s"
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
 				//<< "\nCycles per calculation:\t" << cycles_per << endl;
 		}
 	}
+	cout << "(sum is " << summ << ")\n";
 	return 0;
 }

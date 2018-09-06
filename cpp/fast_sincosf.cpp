@@ -2,7 +2,7 @@
 #include <iostream>
 #include "fast_sincosf.h"
 
-#define PRECISION 64
+#define PRECISION 2048
 
 
 using namespace std;
@@ -95,13 +95,13 @@ float FastSin(float x)
 	double dt2 = dt * dt * (1./2.);
 	double dt3 = dt2 * (dt * (1./3.));
 	double dt4 = dt3 * (dt * (1./4.));
-	double dt5 = dt4 * (dt * (1./5.));
-	double dt6 = dt5 * (dt * (1./6.));
+	//double dt5 = dt4 * (dt * (1./5.));
+	//double dt6 = dt5 * (dt * (1./6.));
 	//double dt7 = dt6 * (dt * (1./7.));
 
 	// the sums are same for sin and cos (Taylor):
-	double first = 1 - dt2 + dt4 - dt6;
-	double second = dt - dt3 + dt5;
+	double first = 1 - dt2 + dt4;// - dt6;
+	double second = dt - dt3;// + dt5;
 	#ifdef DEBUG
 		cout << "ind2 is\t" << index
 			<< "\ns is\t" << s

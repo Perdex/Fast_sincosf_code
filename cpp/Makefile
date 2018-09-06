@@ -3,16 +3,13 @@ FLAGS = -std=c++14 -Wall
 
 all:
 
-tester: fast_sincosf.o
-	g++ tester.cpp fast_sincosf.o -o tester $(FLAGS) -O3
+tester: fast_sincosf.o speedtest.o accuracytest.o
+	g++ tester.cpp fast_sincosf.o speedtest.o accuracytest.o -o tester $(FLAGS) -O2
 	rm *.o
-speedtest: fast_sincosf.o
-	g++ speedtest.cpp fast_sincosf.o -o speedtest $(FLAGS) -O2
-	rm *.o
-single:
-	g++ fast_sincosf.cpp -c -DDEBUG $(FLAGS) -O2
-	g++ tester_single.cpp fast_sincosf.o -o single $(FLAGS) -O2
-	rm *.o
+speedtest.o:
+	g++ speedtest.cpp -c $(FLAGS) -O2
+accuracytest.o:
+	g++ accuracytest.cpp -c $(FLAGS) -O2
 fast_sincosf.o:
 	g++ fast_sincosf.cpp -c $(FLAGS) -O2
 
