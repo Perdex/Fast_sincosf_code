@@ -78,12 +78,12 @@ float FastSin(float x)
 	int index1 = index & (PRECISION-1);
 	int index2 = index + (PRECISION/4);
 
-	double dt2 = dt * dt;
 
 	// s is the value of sine (floored) from lookup table, c is cos
 	double s = lookup[index1];
 	double c = lookup[index2 & (PRECISION-1)];
 
+	double dt2 = dt * dt;
 	double dt4 = dt2 * dt2;
 
 	double second = 1 - dt2 * (1./6.);

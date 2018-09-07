@@ -1,5 +1,5 @@
 
-FLAGS = -std=c++14 -Wall
+FLAGS = -std=c++14 -Wall -march=native
 
 all:
 
