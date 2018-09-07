@@ -29,7 +29,7 @@ int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			//cout << "My method:\t";
 			init_table();
 			auto chrono_t1 = chrono::high_resolution_clock::now();
-			clock_t c_start = clock();
+			//clock_t c_start = clock();
 			
 
 			float sum[4] = {0, 0, 0, 0};
@@ -54,8 +54,8 @@ int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			auto chrono_t2 = chrono::high_resolution_clock::now();
 			auto time_span = chrono::duration_cast<chrono::duration<double>>(chrono_t2 - chrono_t1);
 
-			clock_t c_end = clock();
-			double time_used = 0.001 * (1000 * (c_end-c_start) / CLOCKS_PER_SEC);
+			//clock_t c_end = clock();
+			//double time_used = 0.001 * (1000 * (c_end-c_start) / CLOCKS_PER_SEC);
 
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
@@ -72,7 +72,7 @@ int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 		{
 			//cout << "std::sin:\t";
 			auto chrono_t1 = chrono::high_resolution_clock::now();
-			clock_t c_start = clock();
+			//clock_t c_start = clock();
 
 			
 			float sum[4] = {0, 0, 0, 0};
@@ -92,8 +92,8 @@ int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			auto chrono_t2 = chrono::high_resolution_clock::now();
 			auto time_span = chrono::duration_cast<chrono::duration<double>>(chrono_t2 - chrono_t1);
 
-			clock_t c_end = clock();
-			double time_used = 0.001 * (1000 * (c_end-c_start) / CLOCKS_PER_SEC);
+			//clock_t c_end = clock();
+			//double time_used = 0.001 * (1000 * (c_end-c_start) / CLOCKS_PER_SEC);
 
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			

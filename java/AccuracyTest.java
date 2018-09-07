@@ -3,7 +3,8 @@ public class AccuracyTest{
 	public static void test(float from, int n){
 
 		float x = from;
-		System.out.println("Testing accuracy from " + x + " for " + n + " values");
+		System.out.println("Testing accuracy:");
+		System.out.print("Testing range [" + x + ", ");
 
 		long start = System.nanoTime();
 
@@ -17,17 +18,16 @@ public class AccuracyTest{
 			countEqual += equal;
 			countNot += 1 - equal;
 
-			float d = Math.abs(ref - fast);
-			maxErr = Math.max(maxErr, d);
-			maxRelErr = Math.max(maxRelErr, d/x);
+			float d = ref - fast;
+			maxErr = Math.max(maxErr, Math.abs(d));
+			maxRelErr = Math.max(maxRelErr, Math.abs(d/x));
 
 			x = Math.nextUp(x);
 		}
 		long end = System.nanoTime();
 
-		System.out.println("Final x was " + x);
-		System.out.println("Correct values: " + countEqual);
-		System.out.println("Incorrect values: " + countNot);
+		System.out.println(x + "]:");
+		System.out.println("Correct  / incorrect: " + countEqual + " / " + countNot);
 		System.out.println("Max error: " + maxErr);
 		System.out.println("Max relative error: " + maxRelErr);
 		System.out.println();

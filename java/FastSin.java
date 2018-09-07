@@ -4,17 +4,16 @@ public class FastSin{
 	static{
 		for(int i = 0; i < 64; i++)
 			lookup[i] = Math.sin(i * Math.PI / 32);
-		
 	}
 	static float fastSin(float x){
-		int index = (int)(x * (32 / Math.PI) + 0.5);
+		float offset = x > 0 ? 0.5f : -0.5f;
+		int index = (int)(x * (32 / Math.PI) + offset);
 
 		// distance from the point in lookup table
 		double dt = x - (Math.PI / 32) * index;
 
 		// 0 <= index < 64
 		// index & 63 == index % 64
-		index += 64;
 		index &= 63;
 
 		// s is the value of sine (floored) from lookup table, c is cos
@@ -32,7 +31,6 @@ public class FastSin{
 		// the sums are same for sin and cos (Taylor):
 		double first = 1 - dt2 + dt4 - dt6;
 		double second = dt - dt3 + dt5;
-
 
 		// {sin(x), cos(x)}
 		return (float)(s * first + c * second);
