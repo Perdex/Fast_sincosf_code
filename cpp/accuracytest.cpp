@@ -5,11 +5,34 @@
 #include <ctime>
 #include <cstring>
 #include "fast_sincosf.h"
-
 using namespace std;
-int testAcc(unsigned int f, unsigned int t, unsigned int batch){
-	
-	cout << endl << setprecision(2) << "Range [from, to]: correct/incorrect; max rel error, location" << endl;
+
+void test(double (*func)(double), double (*comp)(double), unsigned int, unsigned int, unsigned int);
+
+double sinf_(double x){
+	return sinf(x);
+}
+
+double cosf_(double x){
+	return cosf(x);
+}
+
+void testAcc(unsigned int f, unsigned int t, unsigned int batch){
+
+	cout << "\nTesting my sin\n";
+	test(FastSin, sin, f, t, batch);
+	cout << "\nTesting my cos\n";
+	test(FastCos, cos, f, t, batch);
+	//cout << "\nTesting CORDIC\n";
+	//test(cordic, sin, f, t, batch);
+	cout << "\nTesting sinf\n";
+	test(sinf_, sin, f, t, batch);
+	cout << "\nTesting cosf\n";
+	test(cosf_, sin, f, t, batch);
+}
+
+void test(double (*func)(double), double (*comp)(double), unsigned int f, unsigned int t, unsigned int batch){
+	cout << setprecision(2) << "Range [from, to]: correct/incorrect; max rel error, location" << endl;
 	clock_t c_start = clock();
 
 	unsigned int zeroes_ = 0, errors_ = 0;
@@ -29,8 +52,8 @@ int testAcc(unsigned int f, unsigned int t, unsigned int batch){
 		for(unsigned int i = from; i < to; i++){
 			float x;
 			std::memcpy(&x, &i, sizeof x);
-			float val = FastSin(x);
-			float ref = sin(x);
+			float val = func(x);
+			float ref = (float)comp((double)x);
 			float err = abs(ref - val);
 			float Rerr = abs(err / ref);
 			
@@ -58,14 +81,6 @@ int testAcc(unsigned int f, unsigned int t, unsigned int batch){
 			
 		}
 		
-		//cout << setprecision(8) << endl;
-		/*cout << "There was " << zeroes << " correct values, " << errors
-			<< " incorrect ones.\nMax error was " << maxerr 
-			<< ",\tfound at x = " << maxerrlocation
-			<< "\nMax rel error was " << rmaxerr 
-			<< ",\tfound at x = " << rmaxerrlocation
-			<< ".\nThis took " << 0.001 * time_used << " s" << endl;
-*/
 		float f_;
 		float t_;
 		std::memcpy(&f_, &from, sizeof f_);
@@ -84,5 +99,4 @@ int testAcc(unsigned int f, unsigned int t, unsigned int batch){
 		<< " incorrect ones.\nMax error was " << maxerr 
 		<< ",\tfound at x = " << maxerrlocation
 		<< ".\nThis took " << 0.001 * time_used << " s" << endl;
-	return 0;
 }

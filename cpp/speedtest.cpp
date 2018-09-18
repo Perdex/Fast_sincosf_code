@@ -8,10 +8,11 @@
 #include <cstring>
 #include "fast_sincosf.h"
 
+#define chronocast chrono::duration_cast<chrono::duration<double>>
 
 using namespace std;
-int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
-	
+void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
+
 	float summ = 0;
 
 	cout << setprecision(2);
@@ -26,47 +27,27 @@ int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 		cout << "Cycles in [" << f_ << ", " << t_ << "]:\t";
 
 		{
-			//cout << "My method:\t";
 			init_table();
 			auto chrono_t1 = chrono::high_resolution_clock::now();
-			//clock_t c_start = clock();
-			
 
-			float sum[4] = {0, 0, 0, 0};
+			double sum = 0;
 
 			unsigned long long cycles_start = __rdtsc();
-			for(unsigned int i_ = from; i_ < to; i_+=4){
-				for(unsigned int i = i_; i < i_ + 4; i++){
-					float x;
-					std::memcpy(&x, &i, sizeof x);
-					//float sin, cos;
-					//FastSinCos(*x, &sin, &cos);
-					//sum += sin + cos;
-
-					sum[i-i_] += FastSin(x);
-
-					//if(i % 100000000 == 0)
-					//	cout << "i: " << i/1000000 << " M\tx: " << *x << "\n";
-				}
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				sum += FastSin(x);
 			}
 			unsigned long long cycles_end = __rdtsc();
 			
 			auto chrono_t2 = chrono::high_resolution_clock::now();
-			auto time_span = chrono::duration_cast<chrono::duration<double>>(chrono_t2 - chrono_t1);
-
-			//clock_t c_end = clock();
-			//double time_used = 0.001 * (1000 * (c_end-c_start) / CLOCKS_PER_SEC);
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
 
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
-
-			summ += sum[0] + sum[1] + sum[2] + sum[3];
-			//cout << "Sum was " << summ << ", t:\t" 
-			//	<< time_used << " s, \tcycles:\t" << cycles_per << "\n";
-			cout << cycles_per << " / ";
-				//<< "\nProcessor time (std::clock):\t" << time_used << " s"
+			summ += sum;
+			cout << cycles_per << " / std::sin: ";
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
-				//<< "\nCycles per calculation:\t" << cycles_per << endl;
 		}
 		
 		{
@@ -75,37 +56,47 @@ int testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			//clock_t c_start = clock();
 
 			
-			float sum[4] = {0, 0, 0, 0};
+			float sum = 0;
 			unsigned long long cycles_start = __rdtsc();
-			for(unsigned int i_ = from; i_ < to; i_+=4)
-				for(unsigned int i = i_; i < i_ + 4; i++){
-					float x;
-					std::memcpy(&x, &i, sizeof x);
-					sum[i-i_] += sin(x);
-
-					//if(i % 100000000 == 0)
-					//	cout << "i: " << i/1000000 << " M\tx: " << *x << "\n";
-					
-				}
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				sum += sin(x);
+			}
 			unsigned long long cycles_end = __rdtsc();
 			
 			auto chrono_t2 = chrono::high_resolution_clock::now();
-			auto time_span = chrono::duration_cast<chrono::duration<double>>(chrono_t2 - chrono_t1);
-
-			//clock_t c_end = clock();
-			//double time_used = 0.001 * (1000 * (c_end-c_start) / CLOCKS_PER_SEC);
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
 
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
-			summ += sum[0] + sum[1] + sum[2] + sum[3];
-			//cout << "Sum was " << summ << ", t:\t" 
-			//	<< time_used << " s, \tcycles:\t" << cycles_per << "\n";
+			summ += sum;
+			cout << cycles_per << " / std::sinf: ";
+		}
+		{
+			//cout << "std::sin:\t";
+			auto chrono_t1 = chrono::high_resolution_clock::now();
+			//clock_t c_start = clock();
+
+			
+			float sum = 0;
+			unsigned long long cycles_start = __rdtsc();
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				sum += sinf(x);
+			}
+			unsigned long long cycles_end = __rdtsc();
+			
+			auto chrono_t2 = chrono::high_resolution_clock::now();
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
+
+			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
+			
+			summ += sum;
 			cout << cycles_per << "\n";
-				//<< "\nProcessor time (std::clock):\t" << time_used << " s"
-				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
-				//<< "\nCycles per calculation:\t" << cycles_per << endl;
 		}
 	}
 	cout << "(sum is " << summ << ")\n";
-	return 0;
+
 }
