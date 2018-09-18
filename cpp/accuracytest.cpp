@@ -28,7 +28,7 @@ void testAcc(unsigned int f, unsigned int t, unsigned int batch){
 	cout << "\nTesting sinf\n";
 	test(sinf_, sin, f, t, batch);
 	cout << "\nTesting cosf\n";
-	test(cosf_, sin, f, t, batch);
+	test(cosf_, cos, f, t, batch);
 }
 
 void test(double (*func)(double), double (*comp)(double), unsigned int f, unsigned int t, unsigned int batch){

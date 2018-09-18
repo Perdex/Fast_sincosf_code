@@ -1,6 +1,8 @@
 # C++ implementations
 
-## Test usage
+WIP: don't use quite yet
+
+## Testing
 To compile, run
 `Make tester`
 

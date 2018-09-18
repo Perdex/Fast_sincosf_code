@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include "tester.h"
 
 using namespace std;
@@ -8,8 +9,12 @@ void testRange(float from, float to, unsigned int batch, bool s, bool a){
 	memcpy(&f, &from, sizeof from);
 	memcpy(&t, &to, sizeof to);
 
-	cout << "\nTesting all " << t - f << " values between " 
-		<< from << " and " << to << ":\n";
+	int ntrue = batch * ceil((float)(t-f)/batch);
+	int toceil = f + ntrue;
+	float toceilf;
+	memcpy(&toceilf, &toceil, sizeof toceilf);
+	cout << "\nTesting all " << ntrue / 1000000 << " million values between " 
+		<< from << " and " << toceilf << ":\n";
 
 	if(s)
 		testSpeed(f, t, batch);
@@ -19,15 +24,16 @@ void testRange(float from, float to, unsigned int batch, bool s, bool a){
 
 int main(int argc, char **args){
 
-
+	// Parse arguments
 	bool speed = false;
 	bool acc = false;
-	for(int i = 0; i < argc; i++){
+	for(int i = 1; i < argc; i++){
 		if(args[i][0] == 's')
 			speed = true;
 		if(args[i][0] == 'a')
 			acc = true;
 	}
+	// If no arguments given, test both
 	if(!(speed || acc))
 		speed = acc = true;
 
