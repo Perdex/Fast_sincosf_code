@@ -41,7 +41,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 
 	float summ = 0;
 
-	cout << setprecision(2);
+	cout << setprecision(3);
 	for(unsigned int from = ff; from < tt; from += batch){
 
 		unsigned int to = from + batch;
@@ -217,7 +217,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 				float x;
 				std::memcpy(&x, &i, sizeof x);
 				double2_t sincos = FastSinCos(x);
-				sum += sincos[0] - sincos[1];
+				sum += sincos[0];
 			}
 			unsigned long long cycles_end = __rdtsc();
 			
@@ -245,7 +245,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 				std::memcpy(&x, &i, sizeof x);
 				float sin, cos;
 				sincosf(x, &sin, &cos);
-				sum += sin - cos;
+				sum += sin;
 			}
 			unsigned long long cycles_end = __rdtsc();
 			

@@ -7,7 +7,7 @@ double lookup[PRECISION];
 typedef double double2_t __attribute__ ((vector_size (2 * sizeof(double))));
 
 
-double FastSin(double x)
+double2_t FastSin(double x)
 {
 	//Overflow of the int becomes a problem somewhere after x = 1e8
 	double offset = x > 0 ? 0.5 : -0.5;
@@ -47,14 +47,14 @@ double FastSin(double x)
 	// {sin(x), cos(x)}
 	//*sin = s * first + c * second;
 	//*cos = c * first - s * second;
-	return (ans1 + ans2)[0];
+	return ans1 + ans2;
 
 }
 
 int main(int argc, char **args){
 	
 	double ans = 0;
-	for(double f = 0; f < 1; f += 0.001) ans += FastSin(f);
+	for(double f = 0; f < 1; f += 0.001) ans += FastSin(f)[0] + FastSin(f)[1];
 
 	std::cout << ans << std::endl;
 	return 0;

@@ -13,9 +13,9 @@ fast_sincosf.o:
 	g++ fast_sincosf.cpp -c $(FLAGS)
 
 asm:
-	g++ fast_sincosf.cpp speedtest.cpp -S $(FLAGS) -O2 -fverbose-asm
+	g++ fast_sincosf.cpp speedtest.cpp -S $(FLAGS) -fverbose-asm
 asm2:
-	g++ asmtest.cpp -S $(FLAGS) -O2 -fverbose-asm
+	g++ asmtest.cpp asmtest2.cpp -S $(FLAGS)
 
 clean:
 	rm -f *.o *.s tester single speedtest perf.data.old
