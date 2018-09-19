@@ -6,12 +6,22 @@
 #include <ctime>
 #include <chrono>
 #include <cstring>
+#include "colors.h"
 #include "fast_sincosf.h"
 
 #define chronocast chrono::duration_cast<chrono::duration<double>>
 
+
 using namespace std;
 void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
+
+	cout << "Values are cycles for ";
+	green("my sin");
+	cout << " / ";
+	yellow("std::sin");
+	cout << " / ";
+	blue("std::sinf");
+ 	cout << ":\n";
 
 	float summ = 0;
 
@@ -24,7 +34,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 		float t_;
 		std::memcpy(&f_, &from, sizeof f_);
 		std::memcpy(&t_, &to, sizeof t_);
-		cout << "Cycles in [" << f_ << ", " << t_ << "]:\t";
+		cout << "Cycles in [" << f_ << ", " << t_ << "]: \t";
 
 		{
 			init_table();
@@ -46,7 +56,8 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
 			summ += sum;
-			cout << cycles_per << " / std::sin: ";
+			green(cycles_per);
+			cout << " / ";
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
 		}
 		
@@ -71,7 +82,8 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
 			summ += sum;
-			cout << cycles_per << " / std::sinf: ";
+			yellow(cycles_per);
+			cout << " / ";
 		}
 		{
 			//cout << "std::sin:\t";
@@ -94,7 +106,9 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
 			summ += sum;
-			cout << cycles_per << "\n";
+
+			blue(cycles_per);
+			cout << "\n";
 		}
 	}
 	cout << "(sum is " << summ << ")\n";

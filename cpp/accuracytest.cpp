@@ -5,6 +5,7 @@
 #include <ctime>
 #include <cstring>
 #include "fast_sincosf.h"
+#include "colors.h"
 using namespace std;
 
 void test(double (*func)(double), double (*comp)(double), unsigned int, unsigned int, unsigned int);
@@ -19,20 +20,32 @@ double cosf_(double x){
 
 void testAcc(unsigned int f, unsigned int t, unsigned int batch){
 
-	cout << "\nTesting my sin\n";
+	cout << "Testing ";
+	yellow("my sin");
+	cout << "\n";
 	test(FastSin, sin, f, t, batch);
-	cout << "\nTesting my cos\n";
+	cout << "Testing ";
+	yellow("my cos");
+	cout << "\n";
 	test(FastCos, cos, f, t, batch);
 	//cout << "\nTesting CORDIC\n";
 	//test(cordic, sin, f, t, batch);
-	cout << "\nTesting sinf\n";
+	cout << "Testing ";
+	yellow("sinf");
+	cout << "\n";
 	test(sinf_, sin, f, t, batch);
-	cout << "\nTesting cosf\n";
+	cout << "Testing ";
+	yellow("cosf");
+	cout << "\n";
 	test(cosf_, cos, f, t, batch);
 }
 
 void test(double (*func)(double), double (*comp)(double), unsigned int f, unsigned int t, unsigned int batch){
-	cout << setprecision(2) << "Range [from, to]: correct/incorrect; max rel error, location" << endl;
+	cout << setprecision(3) << "Range [from, to]: ";
+	green("correct");
+	cout << " / ";
+	red("incorrect");
+	cout << "; max rel error, location" << endl;
 	clock_t c_start = clock();
 
 	unsigned int zeroes_ = 0, errors_ = 0;
@@ -85,9 +98,11 @@ void test(double (*func)(double), double (*comp)(double), unsigned int f, unsign
 		float t_;
 		std::memcpy(&f_, &from, sizeof f_);
 		std::memcpy(&t_, &to, sizeof t_);
-		cout << "Range [" << f_ << ", " << t_ << "]:\t"
-			<< zeroes << " / " << errors
-			<< ";\t" << rmaxerr 
+		cout << "Range [" << f_ << ", " << t_ << "]:\t";
+		green(zeroes);
+		cout << " / ";
+		red(errors);
+		cout << ";\t" << rmaxerr 
 			<< "\t@ x = " << rmaxerrlocation << endl;
 
 		zeroes_ += zeroes;
@@ -95,8 +110,8 @@ void test(double (*func)(double), double (*comp)(double), unsigned int f, unsign
 	}
 	clock_t c_end = clock();
 	auto time_used = 1000 * (c_end-c_start) / CLOCKS_PER_SEC;
-	cout << "\nThere was " << zeroes_ << " correct values, " << errors_
-		<< " incorrect ones.\nMax error was " << maxerr 
+	cout << "\nThere was \033[32m" << zeroes_ << "\033[0m correct values, \033[31m" << errors_
+		<< "\033[0m incorrect ones.\nMax error was " << maxerr 
 		<< ",\tfound at x = " << maxerrlocation
-		<< ".\nThis took " << 0.001 * time_used << " s" << endl;
+		<< ".\nThis took " << 0.001 * time_used << " s\n" << endl;
 }
