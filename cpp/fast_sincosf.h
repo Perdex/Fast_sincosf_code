@@ -9,9 +9,12 @@
 //
 // If x goes over 180 000 000, the method might return inf due to integer overflow
 //
-// returns a tuple {sin(x), cos(x)}
+// returns a double2_t {sin(x), cos(x)}
+
+typedef double double2_t __attribute__ ((vector_size (2 * sizeof(double))));
+
 void init_table();
-void FastSinCos(double x, double *sin, double *cos);
+double2_t FastSinCos(double x);
 double FastSin(double x);
 double FastCos(double x);
 double cordic(double x);

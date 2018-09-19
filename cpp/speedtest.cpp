@@ -18,23 +18,23 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 	cout << "Values are cycles for ";
 	if(testSin){
 		green("my sin");
-		cout << " / ";
+		cout << ", ";
 		yellow("std::sin");
-		cout << " / ";
+		cout << ", ";
 		blue("std::sinf");
 	 	cout << "; ";
 	}
 	if(testCos){
 		green("my cos");
-		cout << " / ";
+		cout << ", ";
 		yellow("std::cos");
-		cout << " / ";
+		cout << ", ";
 		blue("std::cosf");
 	}
 	if(testSinCos){
 		cout << "; ";
 		green("my sincos");
-		cout << " / ";
+		cout << ", ";
 		yellow("std::sincosf");
 	}
 	cout << ":\n";
@@ -50,7 +50,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 		float t_;
 		std::memcpy(&f_, &from, sizeof f_);
 		std::memcpy(&t_, &to, sizeof t_);
-		cout << "Cycles in [" << f_ << ", " << t_ << "]: \t";
+		cout << "Cycles in [" << f_ << ", " << t_ << "]:   ";
 
 		if(testSin){
 			init_table();
@@ -72,8 +72,9 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
 			summ += sum;
+			cout << "\t";
 			green(cycles_per);
-			cout << " / ";
+			cout << ", ";
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
 		}
 		
@@ -99,7 +100,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			
 			summ += sum;
 			yellow(cycles_per);
-			cout << " / ";
+			cout << ", ";
 		}
 		if(testSin){
 			//cout << "std::sin:\t";
@@ -149,8 +150,9 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
 			
 			summ += sum;
+			cout << "\t";
 			green(cycles_per);
-			cout << " / ";
+			cout << ", ";
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
 		}
 		
@@ -176,7 +178,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			
 			summ += sum;
 			yellow(cycles_per);
-			cout << " / ";
+			cout << ", ";
 		}
 		if(testCos){
 			//cout << "std::sin:\t";
@@ -201,6 +203,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			summ += sum;
 
 			blue(cycles_per);
+			cout << "; ";
 		}
 		if(testSinCos){
 			//cout << "std::sin:\t";
@@ -213,9 +216,8 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			for(unsigned int i = from; i < to; i++){
 				float x;
 				std::memcpy(&x, &i, sizeof x);
-				double sin, cos;
-				FastSinCos(x, &sin, &cos);
-				sum += sin - cos;
+				double2_t sincos = FastSinCos(x);
+				sum += sincos[0] - sincos[1];
 			}
 			unsigned long long cycles_end = __rdtsc();
 			
@@ -226,8 +228,9 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			
 			summ += sum;
 
-			cout << "; ";
+			cout << "\t";
 			green(cycles_per);
+			cout << ", ";
 		}
 		if(testSinCos){
 			//cout << "std::sin:\t";
@@ -253,8 +256,8 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSi
 			
 			summ += sum;
 
-			cout << "; ";
 			yellow(cycles_per);
+			cout << "; ";
 		}
 		cout << "\n";
 	}

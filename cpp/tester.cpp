@@ -21,7 +21,7 @@ void testRange(float from, float to, unsigned int batch, bool s, bool a, bool si
 	if(s)
 		testSpeed(f, t, batch, sin, cos, sincos);
 	if(a)
-		testAcc(f, t, batch, sin, cos);
+		testAcc(f, t, batch, sin, cos, sincos);
 }
 
 int main(int argc, char **args){

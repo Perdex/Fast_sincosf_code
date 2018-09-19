@@ -18,7 +18,16 @@ double cosf_(double x){
 	return cosf(x);
 }
 
-void testAcc(unsigned int f, unsigned int t, unsigned int batch, bool testSin, bool testCos){
+double sincoss(double x){
+	double2_t sincos = FastSinCos(x);
+	return sincos[0];
+}
+double sincosc(double x){
+	double2_t sincos = FastSinCos(x);
+	return sincos[1];
+}
+
+void testAcc(unsigned int f, unsigned int t, unsigned int batch, bool testSin, bool testCos, bool testSinCos){
 
 	if(testSin){
 		cout << "Testing ";
@@ -45,6 +54,18 @@ void testAcc(unsigned int f, unsigned int t, unsigned int batch, bool testSin, b
 		yellow("cosf");
 		cout << "\n";
 		test(cosf_, cos, f, t, batch);
+	}
+	if(testSinCos){
+
+		cout << "Testing ";
+		yellow("sin of my sincos");
+		cout << "\n";
+		test(sincoss, sin, f, t, batch);
+
+		cout << "Testing ";
+		yellow("cos of my sincos");
+		cout << "\n";
+		test(sincosc, cos, f, t, batch);
 	}
 }
 
