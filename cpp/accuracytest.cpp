@@ -18,26 +18,34 @@ double cosf_(double x){
 	return cosf(x);
 }
 
-void testAcc(unsigned int f, unsigned int t, unsigned int batch){
+void testAcc(unsigned int f, unsigned int t, unsigned int batch, bool testSin, bool testCos){
 
-	cout << "Testing ";
-	yellow("my sin");
-	cout << "\n";
-	test(FastSin, sin, f, t, batch);
-	cout << "Testing ";
-	yellow("my cos");
-	cout << "\n";
-	test(FastCos, cos, f, t, batch);
-	//cout << "\nTesting CORDIC\n";
-	//test(cordic, sin, f, t, batch);
-	cout << "Testing ";
-	yellow("sinf");
-	cout << "\n";
-	test(sinf_, sin, f, t, batch);
-	cout << "Testing ";
-	yellow("cosf");
-	cout << "\n";
-	test(cosf_, cos, f, t, batch);
+	if(testSin){
+		cout << "Testing ";
+		yellow("my sin");
+		cout << "\n";
+		test(FastSin, sin, f, t, batch);
+	}
+	if(testCos){
+		cout << "Testing ";
+		yellow("my cos");
+		cout << "\n";
+		test(FastCos, cos, f, t, batch);
+	}
+
+	if(testSin){
+		cout << "Testing ";
+		yellow("sinf");
+		cout << "\n";
+		test(sinf_, sin, f, t, batch);
+	}
+	
+	if(testCos){
+		cout << "Testing ";
+		yellow("cosf");
+		cout << "\n";
+		test(cosf_, cos, f, t, batch);
+	}
 }
 
 void test(double (*func)(double), double (*comp)(double), unsigned int f, unsigned int t, unsigned int batch){

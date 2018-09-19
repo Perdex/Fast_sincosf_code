@@ -6,12 +6,14 @@ WIP: don't use quite yet
 To compile, run
 `Make tester`
 
-To test algorithm speed, run
-`./tester s`
+To test algorithm performance, run
+`./tester p`
 
 To test algorithm accuracy, run
 `./tester a`
 
-To test both, run
+To test sin, cos, sincos: use flags `s`, `c`, `b`
+
+To test everything, run
 `./tester`
 

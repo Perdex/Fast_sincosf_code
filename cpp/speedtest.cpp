@@ -13,15 +13,31 @@
 
 
 using namespace std;
-void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
+void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch, bool testSin, bool testCos, bool testSinCos){
 
 	cout << "Values are cycles for ";
-	green("my sin");
-	cout << " / ";
-	yellow("std::sin");
-	cout << " / ";
-	blue("std::sinf");
- 	cout << ":\n";
+	if(testSin){
+		green("my sin");
+		cout << " / ";
+		yellow("std::sin");
+		cout << " / ";
+		blue("std::sinf");
+	 	cout << "; ";
+	}
+	if(testCos){
+		green("my cos");
+		cout << " / ";
+		yellow("std::cos");
+		cout << " / ";
+		blue("std::cosf");
+	}
+	if(testSinCos){
+		cout << "; ";
+		green("my sincos");
+		cout << " / ";
+		yellow("std::sincosf");
+	}
+	cout << ":\n";
 
 	float summ = 0;
 
@@ -36,7 +52,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 		std::memcpy(&t_, &to, sizeof t_);
 		cout << "Cycles in [" << f_ << ", " << t_ << "]: \t";
 
-		{
+		if(testSin){
 			init_table();
 			auto chrono_t1 = chrono::high_resolution_clock::now();
 
@@ -61,7 +77,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
 		}
 		
-		{
+		if(testSin){
 			//cout << "std::sin:\t";
 			auto chrono_t1 = chrono::high_resolution_clock::now();
 			//clock_t c_start = clock();
@@ -85,7 +101,7 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			yellow(cycles_per);
 			cout << " / ";
 		}
-		{
+		if(testSin){
 			//cout << "std::sin:\t";
 			auto chrono_t1 = chrono::high_resolution_clock::now();
 			//clock_t c_start = clock();
@@ -108,8 +124,139 @@ void testSpeed(unsigned int ff, unsigned int tt, unsigned int batch){
 			summ += sum;
 
 			blue(cycles_per);
-			cout << "\n";
+			cout << "; ";
 		}
+		/********************************
+		* COS
+		********************************/
+		if(testCos){
+			init_table();
+			auto chrono_t1 = chrono::high_resolution_clock::now();
+
+			double sum = 0;
+
+			unsigned long long cycles_start = __rdtsc();
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				sum += FastCos(x);
+			}
+			unsigned long long cycles_end = __rdtsc();
+			
+			auto chrono_t2 = chrono::high_resolution_clock::now();
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
+
+			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
+			
+			summ += sum;
+			green(cycles_per);
+			cout << " / ";
+				//<< "\nReal time (std::chrono): " << time_span.count() << " s"
+		}
+		
+		if(testCos){
+			//cout << "std::sin:\t";
+			auto chrono_t1 = chrono::high_resolution_clock::now();
+			//clock_t c_start = clock();
+
+			
+			float sum = 0;
+			unsigned long long cycles_start = __rdtsc();
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				sum += cos(x);
+			}
+			unsigned long long cycles_end = __rdtsc();
+			
+			auto chrono_t2 = chrono::high_resolution_clock::now();
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
+
+			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
+			
+			summ += sum;
+			yellow(cycles_per);
+			cout << " / ";
+		}
+		if(testCos){
+			//cout << "std::sin:\t";
+			auto chrono_t1 = chrono::high_resolution_clock::now();
+			//clock_t c_start = clock();
+
+			
+			float sum = 0;
+			unsigned long long cycles_start = __rdtsc();
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				sum += cosf(x);
+			}
+			unsigned long long cycles_end = __rdtsc();
+			
+			auto chrono_t2 = chrono::high_resolution_clock::now();
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
+
+			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
+			
+			summ += sum;
+
+			blue(cycles_per);
+		}
+		if(testSinCos){
+			//cout << "std::sin:\t";
+			auto chrono_t1 = chrono::high_resolution_clock::now();
+			//clock_t c_start = clock();
+
+			
+			float sum = 0;
+			unsigned long long cycles_start = __rdtsc();
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				double sin, cos;
+				FastSinCos(x, &sin, &cos);
+				sum += sin - cos;
+			}
+			unsigned long long cycles_end = __rdtsc();
+			
+			auto chrono_t2 = chrono::high_resolution_clock::now();
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
+
+			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
+			
+			summ += sum;
+
+			cout << "; ";
+			green(cycles_per);
+		}
+		if(testSinCos){
+			//cout << "std::sin:\t";
+			auto chrono_t1 = chrono::high_resolution_clock::now();
+			//clock_t c_start = clock();
+
+			
+			float sum = 0;
+			unsigned long long cycles_start = __rdtsc();
+			for(unsigned int i = from; i < to; i++){
+				float x;
+				std::memcpy(&x, &i, sizeof x);
+				float sin, cos;
+				sincosf(x, &sin, &cos);
+				sum += sin - cos;
+			}
+			unsigned long long cycles_end = __rdtsc();
+			
+			auto chrono_t2 = chrono::high_resolution_clock::now();
+			auto time_span = chronocast(chrono_t2 - chrono_t1);
+
+			double cycles_per = 0.001 * (1000 * (cycles_end - cycles_start) / n);
+			
+			summ += sum;
+
+			cout << "; ";
+			yellow(cycles_per);
+		}
+		cout << "\n";
 	}
 	cout << "(sum is " << summ << ")\n";
 

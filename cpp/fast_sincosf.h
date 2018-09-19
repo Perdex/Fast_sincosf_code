@@ -11,7 +11,7 @@
 //
 // returns a tuple {sin(x), cos(x)}
 void init_table();
-void FastSinCos(float x, float *sin, float *cos);
+void FastSinCos(double x, double *sin, double *cos);
 double FastSin(double x);
 double FastCos(double x);
 double cordic(double x);
