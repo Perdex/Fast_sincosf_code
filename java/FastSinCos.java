@@ -36,8 +36,8 @@ public class FastSinCos{
 		return (float)(s * first + c * second);
 
 	}
-	static double fastCos(double x){
-		double offset = x > 0 ? 0.5f : -0.5f;
+	static float fastCos(float x){
+		float offset = x > 0 ? 0.5f : -0.5f;
 		int index = (int)(x * (32 / Math.PI) + offset);
 
 		// distance from the point in lookup table
@@ -64,7 +64,7 @@ public class FastSinCos{
 		double second = dt - dt3 + dt5;
 
 		// {sin(x), cos(x)}
-		return c * first - s * second;
+		return (float)(c * first - s * second);
 
 	}
 }

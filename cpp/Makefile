@@ -1,5 +1,5 @@
 
-FLAGS = -std=c++14 -Wall -march=native -O2
+FLAGS = -std=c++14 -Wall -march=native -O3
 all:
 
 tester: fast_sincosf.o speedtest.o accuracytest.o

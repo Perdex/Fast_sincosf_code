@@ -13,7 +13,7 @@ public class SpeedTest{
 
 			float sum = 0;
 			for(int i = 0; i < batch; i++){
-				sum += FastSin.fastSin(x);
+				sum += FastSinCos.fastSin(x);
 				x = Math.nextUp(x);
 			}
 			long end = System.nanoTime();
